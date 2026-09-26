@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>志祺七七風格｜科普議題探索聊天室</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            dark: '#0f172a',
+                            card: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .chat-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-soft {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+<!-- 1. 螢幕尺寸與滿版設定（避免 iPhone 瀏海與動態島被遮擋，禁止雙擊誤縮放） -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- 2. 針對 iPhone (iOS Safari) 的 App 設定 -->
+    <!-- 啟用獨立 App 全螢幕模式（隱藏 Safari 上下網址與工具列，最關鍵的一行！） -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- 頂部狀態列（時間、電池電量）的風格：可選 black-translucent (半透明沉浸式) 或 default -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 加入主畫面時，桌面上顯示的 App 預設名稱 -->
+    <meta name="apple-mobile-web-app-title" content="七七知識室">
+    <!-- 桌面的 App 圖示（可換成任何 512x512 的圖片網址或本地圖片） -->
+    <link rel="apple-touch-icon" href="https://api.iconify.design/heroicons:sparkles-solid.svg?color=%23f59e0b">
+
+    <!-- 3. 針對 Android (Chrome) 的 App 設定 -->
+    <!-- 啟用 Android 獨立 App 視窗模式 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Android 手機頂部狀態列與導航條的主題底色（需配合你網頁的深色背景，例如深藍灰色 #0f172a） -->
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-slate-900">
+
+    <!-- Toast Notification Overlay (Replaces alerts) -->
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs sm:text-sm px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none flex items-center space-x-2 border border-slate-700">
+        <span id="toastIcon">💡</span>
+        <span id="toastMsg">通知訊息</span>
+    </div>
+
+    <!-- Mobile Top Navigation Header -->
+    <header class="bg-slate-900 text-white px-4 py-3 sticky top-0 z-30 shadow-md flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+            <!-- 志祺77風格 Avatar -->
+            <div class="relative">
+                <div class="w-10 h-10 rounded-2xl bg-amber-400 flex items-center justify-center text-slate-950 font-black text-lg tracking-tighter shadow-md border-2 border-amber-300">
+                    77
+                </div>
+                <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900"></div>
+            </div>
+            <div>
+                <div class="flex items-center space-x-1.5">
+                    <h1 class="font-black text-sm tracking-wide text-white">志祺七七・科普小幫手</h1>
+                    <span class="bg-amber-400/20 text-amber-300 text-[10px] font-bold px-1.5 py-0.5 rounded border border-amber-400/30">AI 企劃</span>
+                </div>
+                <p class="text-[11px] text-slate-400 flex items-center gap-1">
+                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    每天 7 分鐘，客觀聊聊科普時事
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button onclick="toggleView('search')" id="navSearchBtn" class="text-xs bg-slate-800 hover:bg-slate-700 text-amber-300 px-3 py-1.5 rounded-xl transition font-medium flex items-center gap-1 border border-slate-700">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <span>選新題目</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto flex flex-col overflow-hidden bg-white shadow-xl relative">
+
+        <!-- ==================== VIEW 1: 搜尋與選題探索面板 ==================== -->
+        <div id="selectionView" class="flex-1 overflow-y-auto p-4 space-y-5 chat-scroll">
+            
+            <!-- 頻道特色橫幅 -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-4 text-white shadow-sm relative overflow-hidden border border-slate-700">
+                <div class="absolute -right-6 -bottom-6 w-28 h-28 bg-amber-400/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-amber-400 text-xs font-bold tracking-wider uppercase flex items-center gap-1">
+                        <span>⚡</span> POPULAR SCIENCE & HEALTH
+                    </span>
+                    <span class="text-[11px] text-slate-400">Step 1：搜尋或挑選主題</span>
+                </div>
+                <h2 class="text-base font-bold text-white leading-tight">
+                    今天想破解哪個日常迷思？<br>
+                    <span class="text-amber-400">輸入關鍵字</span>，為你量身打造七七式深度解析！
+                </h2>
+            </div>
+
+            <!-- 核心功能：關鍵字搜尋區塊 (User Requested Keyword Search Bar) -->
+            <div class="bg-white border-2 border-amber-400/80 rounded-2xl p-3.5 shadow-sm space-y-3">
+                <label class="block text-xs font-bold text-slate-700 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5 text-slate-900">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        搜尋任何想了解的科普關鍵字
+                    </span>
+                    <span class="text-[10px] text-slate-400">AI 即時企劃</span>
+                </label>
+                
+                <div class="relative flex items-center">
+                    <input 
+                        type="text" 
+                        id="keywordInput" 
+                        placeholder="例：超慢跑、乳酸、肌酸、168斷食、褪黑激素..."
+                        class="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-3 pr-24 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition"
+                        onkeydown="if(event.key === 'Enter') handleSearchKeyword()"
+                    />
+                    <button 
+                        id="searchActionBtn"
+                        onclick="handleSearchKeyword()"
+                        class="absolute right-1.5 bg-slate-900 hover:bg-slate-800 active:bg-amber-500 text-amber-400 active:text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-sm"
+                    >
+                        <span>搜尋題目</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </button>
+                </div>
+
+                <!-- 快速點選熱門關鍵字標籤 (Hot Keyword Chips) -->
+                <div>
+                    <div class="text-[11px] text-slate-400 mb-1.5 flex items-center gap-1 font-medium">
+                        <span>🔥 熱門點選：</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="quickSearch('超慢跑')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">🏃 超慢跑</button>
+                        <button onclick="quickSearch('乳酸堆積迷思')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">⚡ 乳酸堆積</button>
+                        <button onclick="quickSearch('168斷食與自噬')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">🥗 168斷食</button>
+                        <button onclick="quickSearch('肌酸與掉髮')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">💊 肌酸迷思</button>
+                        <button onclick="quickSearch('褪黑激素與睡眠')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">🌙 褪黑激素</button>
+                        <button onclick="quickSearch('近視雷射後遺症')" class="text-xs bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-800 px-2.5 py-1 rounded-lg transition font-medium">👀 近視雷射</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速分類切換 -->
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
+                        <span>📂</span> 或從領域分類探索
+                    </span>
+                    <span class="text-[11px] text-slate-400">點擊切換熱門題目</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="switchCategory('運動科學')" class="cat-pill active-cat bg-amber-400/20 border-2 border-amber-400 text-amber-900 font-bold py-2 px-2 rounded-xl text-xs text-center transition flex flex-col items-center gap-1">
+                        <span class="text-base">🏃</span>
+                        <span>運動科學</span>
+                    </button>
+                    <button onclick="switchCategory('營養保健')" class="cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1">
+                        <span class="text-base">🥗</span>
+                        <span>營養保健</span>
+                    </button>
+                    <button onclick="switchCategory('心理大腦')" class="cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1">
+                        <span class="text-base">🧠</span>
+                        <span>心理大腦</span>
+                    </button>
+                    <button onclick="switchCategory('醫學人體')" class="cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1">
+                        <span class="text-base">🧬</span>
+                        <span>醫學人體</span>
+                    </button>
+                    <button onclick="switchCategory('科技生活')" class="cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1">
+                        <span class="text-base">💻</span>
+                        <span>科技生活</span>
+                    </button>
+                    <button onclick="switchCategory('社會與環境')" class="cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1">
+                        <span class="text-base">🌍</span>
+                        <span>環境趨勢</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 主題推薦卡片列表 (動態生成) -->
+            <div class="space-y-2.5 pt-1">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span id="topicListHeading">精選科普主題企劃</span>
+                    </span>
+                    <button onclick="refreshCurrentTopicPool()" class="text-[11px] text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        換一批題目
+                    </button>
+                </div>
+
+                <!-- 載入中骨架屏動畫 -->
+                <div id="topicsLoading" class="hidden space-y-2 py-4 text-center">
+                    <div class="inline-flex items-center justify-center p-3 bg-amber-50 text-amber-500 rounded-full mb-1">
+                        <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700">企劃團隊正在發想最新科普切入點...</p>
+                    <p class="text-[10px] text-slate-400">針對關鍵字拆解反直覺迷思與爭點</p>
+                </div>
+
+                <!-- 主題按鈕容器 -->
+                <div id="topicsContainer" class="space-y-2.5">
+                    <!-- JS 動態插入主題卡片 -->
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ==================== VIEW 2: 志祺七七式深度解析聊天室 ==================== -->
+        <div id="chatView" class="hidden flex-1 flex flex-col h-full bg-slate-50 relative overflow-hidden">
+            
+            <!-- 聊天室上方主題標題條 -->
+            <div class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between shadow-xs">
+                <div class="flex items-center space-x-2 truncate">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                    <span id="activeTopicBadge" class="text-xs font-bold text-slate-900 truncate max-w-[200px] sm:max-w-xs">
+                        目前專題討論中
+                    </span>
+                </div>
+                <button onclick="toggleView('search')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1 flex-shrink-0">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span>重新選題</span>
+                </button>
+            </div>
+
+            <!-- 訊息捲動區域 -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll">
+                <!-- 訊息將由 JavaScript 動態新增 -->
+            </div>
+
+            <!-- 生成中的打字機狀態提示 -->
+            <div id="typingIndicator" class="hidden px-4 py-2 bg-amber-50 border-t border-amber-200 text-xs text-amber-800 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    <span id="typingText">七七團隊正在查找醫學文獻與梳理爭點中...</span>
+                </div>
+                <span class="text-[10px] text-amber-600 font-mono">RESEARCHING...</span>
+            </div>
+
+            <!-- 底部追問 / 互動輸入框 -->
+            <div class="bg-white border-t border-slate-200 p-3">
+                <form id="chatForm" onsubmit="handleFollowUp(event)" class="flex items-center space-x-2">
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            id="followUpInput" 
+                            placeholder="問問七七：這對一般人有何副作用？怎麼挑選？" 
+                            class="w-full bg-slate-100 border border-slate-200 rounded-xl py-2 px-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition"
+                        />
+                    </div>
+                    <button 
+                        type="submit" 
+                        id="sendBtn"
+                        class="bg-slate-900 hover:bg-slate-800 active:bg-amber-500 text-amber-400 active:text-slate-950 p-2 sm:px-3 rounded-xl text-xs font-bold transition flex items-center justify-center flex-shrink-0"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // 內建豐富的預設科普主題庫（當 API 連線問題或快取時即時呼應）
+        const categoryPresetMap = {
+            '運動科學': [
+                {
+                    title: '【超慢跑真的比慢跑燃脂？】三個大眾最常誤解的運動生理學真相',
+                    hook: '號稱不傷膝蓋、又能進入高效燃脂區間的超慢跑，真的適合所有人嗎？',
+                    keyword: '超慢跑'
+                },
+                {
+                    title: '【乳酸堆積是肌肉痠痛的兇手？】運動科學早就推翻的陳年迷思',
+                    hook: '隔天讓你下不了床的「延遲性肌肉痠痛」，罪魁禍首究竟是誰？',
+                    keyword: '乳酸'
+                },
+                {
+                    title: '【肌酸補充會導致掉髮與腎負擔？】從醫學文獻檢視補劑爭議',
+                    hook: '健身人最愛的補劑，到底會不會影響賀爾蒙？一般人需要吃嗎？',
+                    keyword: '肌酸'
+                },
+                {
+                    title: '【重訓後黃金30分鐘一定要喝乳清？】蛋白質補充時機的科學破解',
+                    hook: '到底有沒有所謂的代謝窗口？文獻對「總量」與「時機」的最新定論。',
+                    keyword: '乳清蛋白'
+                }
+            ],
+            '營養保健': [
+                {
+                    title: '【168斷食真能啟動細胞自噬？】醫學界對間歇性斷食的實話實說',
+                    hook: '明星網紅都在推的168斷食法，減掉的究竟是脂肪還是寶貴肌肉？',
+                    keyword: '168斷食'
+                },
+                {
+                    title: '【吃魚油真的能抗發炎、護心臟？】高濃度EPA與DHA的選購科學',
+                    hook: '市售魚油價格差十倍，從rTG型態到重金屬檢驗，一般人該怎麼挑？',
+                    keyword: '魚油'
+                },
+                {
+                    title: '【長期吃褪黑激素有依賴性嗎？】助眠補充劑背後的生理鐘機制',
+                    hook: '失眠睡不著吃一顆有用嗎？神經科醫師提醒的禁忌與使用時間點。',
+                    keyword: '褪黑激素'
+                },
+                {
+                    title: '【膠原蛋白吃進肚子都被胃酸分解？】到底是不是繳智商稅的爭議剖析',
+                    hook: '從胜肽吸收率到維生素C協同，正反雙方各執一詞的關鍵爭點。',
+                    keyword: '膠原蛋白'
+                }
+            ],
+            '心理大腦': [
+                {
+                    title: '【拖延症不是因為懶，而是大腦在逃避焦慮？】情緒調節的腦神經科學',
+                    hook: '為什麼死到臨頭才要動手？了解杏仁核與前額葉皮質的內在拔河。',
+                    keyword: '拖延症'
+                },
+                {
+                    title: '【多巴胺斷食真能找回專注力？】矽谷流行的戒斷法到底有沒有科學根據',
+                    hook: '戒掉滑手機、美食能重置大腦？神經科學家眼中的迷思與合理做法。',
+                    keyword: '多巴胺'
+                },
+                {
+                    title: '【為什麼我們會對負面新聞上癮？】大腦演化留下的「末日滑屏」陷阱',
+                    hook: '越看心情越糟卻停不下來，從演化心理學看社群演算法的致命弱點。',
+                    keyword: '認知偏誤'
+                },
+                {
+                    title: '【白噪音真的能幫助深層睡眠嗎？】聽覺刺激對腦電波的實際影響',
+                    hook: '粉紅噪音、棕色噪音又有何差別？科學研究揭露的隱藏風險。',
+                    keyword: '白噪音'
+                }
+            ],
+            '醫學人體': [
+                {
+                    title: '【近視雷射做完真的會乾眼或炫光？】SMILE與LASIK的技術優缺評估',
+                    hook: '號稱隔天就能上班的微創雷射，眼科醫師自己為什麼很多還戴眼鏡？',
+                    keyword: '近視雷射'
+                },
+                {
+                    title: '【人體一天真的需要喝足八杯水？】水中毒與腎臟代謝的科學實情',
+                    hook: '口渴才喝水真的來不及了嗎？體重乘於多少才合適？破除日常補水迷思。',
+                    keyword: '喝水'
+                },
+                {
+                    title: '【維生素D缺乏會引發全身慢性病？】曬太陽與口服滴劑的攝取平衡',
+                    hook: '台灣明明陽光普照，為什麼超過一半人缺乏？最新健檢報告揭秘。',
+                    keyword: '維生素D'
+                },
+                {
+                    title: '【久坐對人體的危害堪比抽煙？】即使每天運動一小時也抵消不了？',
+                    hook: '下肢血液循環、胰島素敏感度與升高的全因死亡率科學解析。',
+                    keyword: '久坐'
+                }
+            ],
+            '科技生活': [
+                {
+                    title: '【藍光眼鏡到底是不是行銷騙局？】眼科醫學會對螢幕疲勞的真實建議',
+                    hook: '黃色鏡片真的能護眼嗎？造成眼睛痠澀的真正原因可能出乎你意料。',
+                    keyword: '抗藍光'
+                },
+                {
+                    title: '【手機充整晚會大幅縮短電池壽命？】鋰電池化學與現代保護晶片解析',
+                    hook: '維持在20%~80%真的能延長一倍壽命？拆解大眾最糾結的充電習慣。',
+                    keyword: '鋰電池'
+                },
+                {
+                    title: '【主動降噪耳機會傷害內耳聽力嗎？】反向聲波技術與聽覺疲勞的關聯',
+                    hook: '戴上降噪耳機感覺有「耳壓感」是正常的嗎？聽力專家的長期使用建議。',
+                    keyword: '降噪耳機'
+                },
+                {
+                    title: '【AI真的會取代你我的工作嗎？】自動化浪潮下勞動力轉型的歷史軌跡',
+                    hook: '從蒸汽機到大語言模型，哪些技能具有不可替代的人性護城河？',
+                    keyword: '人工智慧'
+                }
+            ],
+            '社會與環境': [
+                {
+                    title: '【碳費開徵真的會引發綠色通膨？】從房價到便當價格的連鎖效應剖析',
+                    hook: '減碳政策到底會不會轉嫁到小老百姓身上？企業成本與政府配套爭點。',
+                    keyword: '碳費'
+                },
+                {
+                    title: '【紙吸管真的比塑膠吸管更環保嗎？】全生命週期評估（LCA）的殘酷真相',
+                    hook: 'PFAS永久化學物殘留與砍伐碳足跡，綠色消費主義背後的矛盾。',
+                    keyword: '環保吸管'
+                },
+                {
+                    title: '【核能到底算不算綠能？】小型模組化反應爐（SMR）掀起的全球能源辯論',
+                    hook: '基載電力缺口與核廢料終端處置，不同國家政策分歧的根本考量。',
+                    keyword: '核能'
+                },
+                {
+                    title: '【微塑膠已經進入人類大腦與血液？】環境毒理學家的嚴肅警告與因應',
+                    hook: '每週吃進一張信用卡大小的塑膠？如何透過日常習慣降低體內暴露量。',
+                    keyword: '微塑膠'
+                }
+            ]
+        };
+
+        // 狀態管理
+        let currentCategory = '運動科學';
+        let currentKeyword = '';
+        let currentTopicList = [];
+        let activeTopic = null;
+        let isGenerating = false;
+        let speechSynth = window.speechSynthesis || null;
+        let isSpeaking = false;
+
+        // 畫面切換：'search' (探索挑選) 或 'chat' (對話文章)
+        function toggleView(view) {
+            const selectionView = document.getElementById('selectionView');
+            const chatView = document.getElementById('chatView');
+            const navSearchBtn = document.getElementById('navSearchBtn');
+
+            if (view === 'search') {
+                selectionView.classList.remove('hidden');
+                chatView.classList.add('hidden');
+                navSearchBtn.innerHTML = `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <span>回討論</span>
+                `;
+                if (!activeTopic) navSearchBtn.classList.add('hidden');
+                else navSearchBtn.classList.remove('hidden');
+            } else {
+                selectionView.classList.add('hidden');
+                chatView.classList.remove('hidden');
+                navSearchBtn.classList.remove('hidden');
+                navSearchBtn.innerHTML = `
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span>選新題目</span>
+                `;
+            }
+        }
+
+        // 分類標籤切換
+        function switchCategory(catName) {
+            currentCategory = catName;
+            currentKeyword = '';
+            document.getElementById('keywordInput').value = '';
+
+            // 更新按鈕樣式
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                if (btn.innerText.includes(catName)) {
+                    btn.className = "cat-pill active-cat bg-amber-400/20 border-2 border-amber-400 text-amber-900 font-bold py-2 px-2 rounded-xl text-xs text-center transition flex flex-col items-center gap-1";
+                } else {
+                    btn.className = "cat-pill bg-slate-50 border border-slate-200 text-slate-600 font-medium py-2 px-2 rounded-xl text-xs text-center hover:bg-slate-100 transition flex flex-col items-center gap-1";
+                }
+            });
+
+            document.getElementById('topicListHeading').innerText = `【${catName}】熱門科普專題`;
+            loadCategoryTopics(catName);
+        }
+
+        // 載入該分類下的預設專題
+        function loadCategoryTopics(catName) {
+            const list = categoryPresetMap[catName] || categoryPresetMap['運動科學'];
+            currentTopicList = list;
+            renderTopicList(list);
+        }
+
+        // 點擊熱門關鍵字
+        function quickSearch(kw) {
+            document.getElementById('keywordInput').value = kw;
+            handleSearchKeyword();
+        }
+
+        // 核心搜尋處理：呼叫 Gemini API 根據關鍵字即時發想 4 個志祺七七風格題目
+        async function handleSearchKeyword() {
+            const input = document.getElementById('keywordInput');
+            const kw = input.value.trim();
+            if (!kw) {
+                showToast("⚠️ 請輸入想搜尋的關鍵字（如：超慢跑、乳酸、168斷食）");
+                return;
+            }
+
+            currentKeyword = kw;
+            document.getElementById('topicListHeading').innerText = `「${kw}」的專屬科普企劃`;
+            
+            // 顯示載入動畫
+            document.getElementById('topicsContainer').innerHTML = '';
+            document.getElementById('topicsLoading').classList.remove('hidden');
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `你是一位資深的知識型 YouTube 頻道「志祺七七」的主編與企劃總監。
+你的專長是針對任何嚴肅的科學、健康、生理機制或社會爭議主題，提煉出最能戳中大眾痛點、反直覺好奇心、具備實證討論價值的 4 個影片企劃題目。
+每個題目必須具有志祺七七頻道的招牌特色（常帶有【】方括號引號、問句、反直覺對比）。`;
+
+            const userPrompt = `使用者輸入了科普關鍵字：「${kw}」。
+請為此關鍵字發想 4 個最適合做成志祺七七科普影片的選題。
+請回傳嚴格的 JSON 陣列格式，包含 4 個物件：
+[
+  {
+    "title": "【吸睛影片標題】帶有反直覺或問句",
+    "hook": "一句話說明大眾的日常迷思或為什麼大家都在討論這件事",
+    "keyword": "${kw}"
+  }
+]`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userPrompt }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] },
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        "title": { "type": "STRING" },
+                                        "hook": { "type": "STRING" },
+                                        "keyword": { "type": "STRING" }
+                                    },
+                                    propertyOrdering: ["title", "hook", "keyword"]
+                                }
+                            }
+                        }
+                    })
+                });
+
+                if (!response.ok) throw new Error("API 響應異常");
+
+                const result = await response.json();
+                const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                const generatedTopics = JSON.parse(jsonText);
+
+                if (Array.isArray(generatedTopics) && generatedTopics.length > 0) {
+                    currentTopicList = generatedTopics;
+                    renderTopicList(generatedTopics);
+                    showToast(`✨ 成功為「${kw}」生成 4 個專屬企劃！`);
+                } else {
+                    throw new Error("格式解析錯誤");
+                }
+            } catch (err) {
+                console.warn("API 獲取失敗，使用備用智能模板：", err);
+                // 備用防斷機制：若網路不順，透過字串生成合理的 4 個切入角度
+                const fallbackList = [
+                    {
+                        title: `【${kw}真的有科學根據？】三個大眾最常被誤導的觀念解析`,
+                        hook: `近期在社群掀起熱議的「${kw}」，背後到底有哪些未被揭露的盲點？`,
+                        keyword: kw
+                    },
+                    {
+                        title: `【${kw}到底適合誰？】醫學文獻揭露的潛在風險與禁忌族群`,
+                        hook: `跟風嘗試真的安全嗎？來看專業醫師與學者怎麼評估體質差異。`,
+                        keyword: kw
+                    },
+                    {
+                        title: `【打破迷思！${kw}的底層生理運作機制】從根本看懂身體變化`,
+                        hook: `不用艱深術語，用白話文帶你拆解為什麼它會引發如此廣泛的討論。`,
+                        keyword: kw
+                    },
+                    {
+                        title: `【學界如何看待${kw}？】最新臨床試驗與實用操作建議`,
+                        hook: `正反雙方的核心爭點是什麼？如果你也想嘗試，有哪三件事必須注意？`,
+                        keyword: kw
+                    }
+                ];
+                currentTopicList = fallbackList;
+                renderTopicList(fallbackList);
+                showToast(`💡 已為「${kw}」整理出熱門探討角度`);
+            } finally {
+                document.getElementById('topicsLoading').classList.add('hidden');
+            }
+        }
+
+        // 刷新目前選題
+        function refreshCurrentTopicPool() {
+            if (currentKeyword) {
+                handleSearchKeyword();
+            } else {
+                loadCategoryTopics(currentCategory);
+                showToast("🔄 已刷新精選主題列表");
+            }
+        }
+
+        // 渲染科普題目卡片
+        function renderTopicList(topics) {
+            const container = document.getElementById('topicsContainer');
+            container.innerHTML = '';
+
+            topics.forEach((t, idx) => {
+                const card = document.createElement('div');
+                card.className = "group bg-white hover:bg-amber-50/50 border border-slate-200 hover:border-amber-400 p-3.5 rounded-2xl transition duration-200 shadow-xs hover:shadow cursor-pointer flex flex-col justify-between";
+                card.onclick = () => startTopicDiscussion(t);
+
+                card.innerHTML = `
+                    <div class="flex items-start space-x-2.5">
+                        <span class="w-6 h-6 rounded-lg bg-slate-900 group-hover:bg-amber-400 text-amber-400 group-hover:text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 transition mt-0.5">
+                            0${idx + 1}
+                        </span>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-slate-900 group-hover:text-amber-900 text-xs sm:text-sm leading-snug line-clamp-2">
+                                ${t.title}
+                            </h3>
+                            <p class="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                                ${t.hook}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                        <span class="bg-slate-100 group-hover:bg-amber-100 group-hover:text-amber-800 px-2 py-0.5 rounded font-medium transition">
+                            #${t.keyword || currentCategory}
+                        </span>
+                        <span class="text-amber-600 font-bold flex items-center gap-0.5 group-hover:translate-x-1 transition">
+                            看七七深度拆解
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 使用者點選特定主題，切換到聊天室並開始產生志祺七七式深度解析
+        async function startTopicDiscussion(topicObj) {
+            activeTopic = topicObj;
+            toggleView('chat');
+            document.getElementById('activeTopicBadge').innerText = topicObj.title;
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = ''; // 清空先前記錄，呈現專注的專題閱讀
+
+            // 1. 新增使用者的提問氣泡
+            appendUserMessage(`我想深入了解這個題目：\n【${topicObj.title}】\n請七七用招牌影片架構幫我做一篇完整科普拆解！`);
+
+            // 2. 顯示生成中狀態
+            showTyping(true, "七七團隊正在檢閱國際文獻、整理正反觀點中...");
+
+            // 3. 呼叫 Gemini 生成志祺七七招牌格式的深度文章
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemInstruction = `你是一位專業且極具親和力的知識型內容創作者，語氣、思考框架與節奏完全擬真台灣知名 YouTube 頻道「志祺七七（Shichi77）」。
+
+【你的核心目標】
+針對使用者指定的科普／運動科學／保健議題，產出如同志祺七七正式影片的逐字解說腳本。
+內容必須結構分明、用字平實、多用白話生活比喻、講求科學實證且客觀中立，並具備強烈的圖文拆解感。
+
+【嚴格遵守的五段式招牌腳本架構】
+請務必依序包含以下五大部分，並附上醒目的 Emoji 標題：
+
+1. 💡【生活化破題・反直覺開場】
+- 招牌招呼語（如「哈囉大家好，我是志祺！你有沒有聽過...」或「你最近是不是也常在社群看到...」）。
+- 從生活痛點或大眾普遍深信不疑的直覺切入，點出為什麼大家最近都在討論這件事。
+
+2. 📜【科學背景與運作脈絡】
+- 換位思考，用極其白話、生活的譬喻解釋人體生理學或科學運作機制。
+- 說明關鍵名詞的真實定義（「簡單來說，它在身體裡就像是...」）。
+
+3. ⚔️【核心爭議與常見誤區】
+- 大家常常搞錯什麼？為什麼會產生正反爭辯？
+- 拆解市面上常見的過度誇大說法或坊間恐慌。
+
+4. ⚖️【最新科學研究與實用建議】
+- 實證醫學與近期文獻怎麼說？給予客觀數據或專家共識。
+- 針對一般人的日常生活，整理出 2~3 點具體、好執行的操作指引。
+
+5. 🤔【七七總結與留言反思】
+- 標誌性的招牌金句收斂，客觀平衡看待這項科學或健康議題。
+- 經典結尾招呼與社群互動提問：「那今天這支影片聊到這裡，想問大家：你平常有...的習慣嗎？你覺得...？歡迎在底下留言跟我們分享！最後，如果你喜歡這支影片，歡迎訂閱按讚分享，那我們就明晚七點再見囉，掰掰！」`;
+
+            const prompt = `請針對科普專題：「${topicObj.title}」（背景迷思：${topicObj.hook}）產出完整的志祺七七深度影片腳本。`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                    })
+                });
+
+                if (!response.ok) throw new Error("API 請求錯誤");
+
+                const result = await response.json();
+                const scriptText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (scriptText) {
+                    appendArticleMessage(topicObj.title, scriptText);
+                } else {
+                    throw new Error("未獲得文字內容");
+                }
+            } catch (err) {
+                console.error(err);
+                // 網路失敗時的優質範本備援
+                const fallbackScript = generateOfflineScript(topicObj);
+                appendArticleMessage(topicObj.title, fallbackScript);
+                showToast("💡 模式：已啟用離線精華腳本");
+            } finally {
+                showTyping(false);
+            }
+        }
+
+        // 處理使用者的追問（聊天室模式）
+        async function handleFollowUp(e) {
+            e.preventDefault();
+            const input = document.getElementById('followUpInput');
+            const userQ = input.value.trim();
+            if (!userQ || isGenerating) return;
+
+            input.value = '';
+            appendUserMessage(userQ);
+            showTyping(true, "志祺正在整理回答...");
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemInstruction = `你是 YouTube 知識頻道主「志祺七七」。
+請維持志祺親切、有邏輯、客觀中立、語氣自然的風格，回答使用者在科普專題【${activeTopic?.title || '當前主題'}】下的延伸追問。
+請提供有文獻支持、生活化且容易理解的回答，長度約 200~300 字，最後以互動問句收尾。`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userQ }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                    })
+                });
+
+                const result = await response.json();
+                const replyText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (replyText) {
+                    appendAssistantTextMessage(replyText);
+                } else {
+                    throw new Error("無法獲取回覆");
+                }
+            } catch (err) {
+                appendAssistantTextMessage("抱歉，剛才連線稍有延遲！簡單來說，科學上任何補充劑或運動法都講求個體差異與劑量，建議評估自身體況，必要時諮詢醫師或教練最保險喔！你平時有遇過類似狀況嗎？");
+            } finally {
+                showTyping(false);
+            }
+        }
+
+        // 新增使用者訊息
+        function appendUserMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex justify-end items-end space-x-2";
+            msgDiv.innerHTML = `
+                <div class="max-w-[85%] bg-slate-900 text-white rounded-2xl rounded-br-none px-3.5 py-2.5 text-xs sm:text-sm shadow-sm whitespace-pre-wrap leading-relaxed">
+                    ${escapeHtml(text)}
+                </div>
+                <div class="w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center text-[10px] text-slate-700 font-bold flex-shrink-0">
+                    我
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        // 新增志祺七七完整腳本卡片
+        function appendArticleMessage(title, rawText) {
+            const chatMessages = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex items-start space-x-2.5 max-w-full";
+
+            const formattedHtml = formatShichiMarkdown(rawText);
+
+            // 唯一識別碼以便語音與複製
+            const msgId = 'msg_' + Date.now();
+
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-amber-400 flex items-center justify-center text-slate-950 font-black text-xs flex-shrink-0 shadow-sm border border-amber-300 mt-1">
+                    77
+                </div>
+                <div class="flex-1 bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 shadow-sm text-xs sm:text-sm text-slate-800 space-y-3 leading-relaxed">
+                    <!-- 專題標題 Badge -->
+                    <div class="border-b border-slate-100 pb-2 flex items-center justify-between">
+                        <span class="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span>🎬</span> 志祺七七・科普解說腳本
+                        </span>
+                        <span class="text-[10px] text-slate-400">閱讀約 3-4 分鐘</span>
+                    </div>
+
+                    <!-- 內文排版 -->
+                    <div id="${msgId}" class="article-text space-y-3">
+                        ${formattedHtml}
+                    </div>
+
+                    <!-- 互動操作工具列 (複製、朗讀、重看) -->
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="copyArticleText('${msgId}')" class="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg transition font-medium flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                <span>複製全文</span>
+                            </button>
+                            <button onclick="toggleSpeechReadout('${msgId}')" id="ttsBtn_${msgId}" class="text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-800 px-2.5 py-1.5 rounded-lg transition font-medium flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                                <span class="tts-label">聽語音</span>
+                            </button>
+                        </div>
+                        <button onclick="toggleView('search')" class="text-[11px] text-amber-600 font-bold hover:underline">
+                            換個主題 →
+                        </button>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        // 新增一般對話回覆
+        function appendAssistantTextMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = "flex items-start space-x-2.5 max-w-full";
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-amber-400 flex items-center justify-center text-slate-950 font-black text-xs flex-shrink-0 shadow-sm border border-amber-300 mt-1">
+                    77
+                </div>
+                <div class="max-w-[85%] bg-white border border-slate-200 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+        }
+
+        // 格式化志祺七七腳本為易讀的排版
+        function formatShichiMarkdown(text) {
+            let s = escapeHtml(text);
+
+            // 針對 5 個主要模組標題做高亮卡片設計
+            s = s.replace(/(💡【.*?】)/g, '<div class="font-black text-sm text-amber-900 bg-amber-100/70 p-2 rounded-xl mt-3 mb-1 border-l-4 border-amber-500">$1</div>');
+            s = s.replace(/(📜【.*?】)/g, '<div class="font-black text-sm text-sky-900 bg-sky-100/70 p-2 rounded-xl mt-3 mb-1 border-l-4 border-sky-500">$1</div>');
+            s = s.replace(/(⚔️【.*?】)/g, '<div class="font-black text-sm text-rose-900 bg-rose-100/70 p-2 rounded-xl mt-3 mb-1 border-l-4 border-rose-500">$1</div>');
+            s = s.replace(/(⚖️【.*?】)/g, '<div class="font-black text-sm text-emerald-900 bg-emerald-100/70 p-2 rounded-xl mt-3 mb-1 border-l-4 border-emerald-500">$1</div>');
+            s = s.replace(/(🤔【.*?】)/g, '<div class="font-black text-sm text-violet-900 bg-violet-100/70 p-2 rounded-xl mt-3 mb-1 border-l-4 border-violet-500">$1</div>');
+
+            // 粗體處理
+            s = s.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>');
+            
+            // 條列點處理
+            s = s.replace(/^[•\-\*]\s+(.*)$/gm, '<div class="flex items-start space-x-1.5 ml-1 my-1"><span class="text-amber-500 font-bold">•</span><span class="flex-1">$1</span></div>');
+
+            // 換行處理
+            s = s.replace(/\n\n+/g, '<div class="my-2"></div>');
+            s = s.replace(/\n/g, '<br>');
+
+            return s;
+        }
+
+        // HTML 轉義工具
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        // 語音朗讀功能 (Web Speech API)
+        function toggleSpeechReadout(elementId) {
+            if (!speechSynth) {
+                showToast("⚠️ 您的瀏覽器不支援語音合成功能");
+                return;
+            }
+
+            const btn = document.getElementById('ttsBtn_' + elementId);
+            const label = btn ? btn.querySelector('.tts-label') : null;
+
+            if (isSpeaking) {
+                speechSynth.cancel();
+                isSpeaking = false;
+                if (label) label.innerText = "聽語音";
+                showToast("⏹️ 已停止朗讀");
+                return;
+            }
+
+            const textElem = document.getElementById(elementId);
+            if (!textElem) return;
+
+            const textToSpeak = textElem.innerText;
+            const utterThis = new SpeechSynthesisUtterance(textToSpeak);
+            utterThis.lang = 'zh-TW';
+            utterThis.rate = 1.05; // 稍快，符合志祺的俐落口條
+            utterThis.pitch = 1.0;
+
+            utterThis.onstart = () => {
+                isSpeaking = true;
+                if (label) label.innerText = "停止";
+                showToast("🔊 志祺七七語音導讀開始...");
+            };
+
+            utterThis.onend = () => {
+                isSpeaking = false;
+                if (label) label.innerText = "聽語音";
+            };
+
+            utterThis.onerror = () => {
+                isSpeaking = false;
+                if (label) label.innerText = "聽語音";
+            };
+
+            speechSynth.speak(utterThis);
+        }
+
+        // 複製全文到剪貼簿 (遵循指令使用 document.execCommand('copy') 避免 iframe 限制)
+        function copyArticleText(elementId) {
+            const elem = document.getElementById(elementId);
+            if (!elem) return;
+
+            const text = elem.innerText;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast("📋 全文已成功複製到剪貼簿！");
+                } else {
+                    showToast("⚠️ 複製失敗，請手動選取");
+                }
+            } catch (err) {
+                showToast("⚠️ 複製失敗，請手動選取");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        // 滾動到底部
+        function scrollToBottom() {
+            setTimeout(() => {
+                const chatContainer = document.getElementById('chatMessages');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 50);
+        }
+
+        // 顯示載入中提示
+        function showTyping(show, text = "") {
+            isGenerating = show;
+            const indicator = document.getElementById('typingIndicator');
+            const typingText = document.getElementById('typingText');
+            if (show) {
+                typingText.innerText = text;
+                indicator.classList.remove('hidden');
+                scrollToBottom();
+            } else {
+                indicator.classList.add('hidden');
+            }
+        }
+
+        // 替代 alert 的精緻 Toast 提示
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2600);
+        }
+
+        // 離線備援腳本生成器（確保斷網時依然具備高品質志祺七七體驗）
+        function generateOfflineScript(topic) {
+            return `💡【生活化破題・反直覺開場】
+哈囉大家好，我是志祺！你有沒有聽過身邊的朋友，最近常常在聊「${topic.keyword || '這個話題'}」？
+大家常直覺認為只要照著網路說法做，就能輕鬆見效，但你有沒有想過，為什麼學界和醫學界總是有截然不同的聲音？今天就讓我們用 7 分鐘，一起客觀聊聊這件事！
+
+📜【科學背景與運作脈絡】
+簡單來說，在人體的生理機制當中，這件事情就像是工廠裡的生產線調配。
+當外在刺激或營養成分進入體內時，細胞並不是照單全收，而是需要特定的酵素與受體共同協作。
+如果我們忽略了劑量與時間點，再好的東西進入身體也可能只是徒勞無功。
+
+⚔️【核心爭議與常見誤區】
+不過在網路社群上，大家最常犯的第一個錯誤，就是「倒果為因」。
+許多人常把相關性當作因果性，甚至市售許多產品為了商業行銷，刻意放大了動物實驗的結果，卻忽略了人體臨床實驗在吸收率與代謝上的巨大落差。
+
+⚖️【最新科學研究與實用建議】
+那麼，國際頂尖期刊與醫學指南到底怎麼說呢？
+根據最新的系統性文獻回顧，對於健康的一般成年人來說，建議掌握以下兩大核心原則：
+1. 先建立穩固的生活基石：確保睡眠充足與均衡飲水，這兩者對身體自癒力的效益遠大於任何單一捷徑。
+2. 循序漸進且量力而為：任何調整都應該給身體 2 至 4 週的觀察期，並記錄身心反饋。
+
+🤔【七七總結與留言反思】
+回到我們一開始的問題，科學研究從來不是非黑即白，而是隨著研究不斷修正的過程。
+那今天這支影片聊到這裡，也想問問大家：你平常會嘗試這類新方法嗎？還是你曾經踩過哪些意想不到的雷？
+歡迎在底下留言跟我們分享！最後，如果你喜歡這支影片，歡迎按讚訂閱分享出去，那我們就明晚七點再見囉，掰掰！`;
+        }
+
+        // 初始化載入
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCategoryTopics('運動科學');
+        });
+    </script>
+</body>
+</html>
